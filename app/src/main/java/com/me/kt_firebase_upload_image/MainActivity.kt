@@ -52,6 +52,11 @@ class MainActivity : AppCompatActivity() {
                 MainViewModel.MainEvent.ChooseFile -> {
                     chooseFile()
                 }
+                is MainViewModel.MainEvent.ShowToast -> {
+                    event.message?.let {message ->
+                        Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
+                    }
+                }
             }.exhaustive
         }
     }

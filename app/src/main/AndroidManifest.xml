@@ -3,6 +3,7 @@
     package="com.me.kt_firebase_upload_image">
 
     <permission android:name="android.permission.INTERNET"/>
+    <permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:allowBackup="true"

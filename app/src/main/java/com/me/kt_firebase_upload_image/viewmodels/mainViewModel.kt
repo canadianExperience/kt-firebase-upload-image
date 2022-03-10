@@ -26,7 +26,12 @@ class MainViewModel: ViewModel() {
         mainEventChannel.send(MainEvent.ChooseFile)
     }
 
+    fun onShowToast(message: String?) = viewModelScope.launch {
+        mainEventChannel.send(MainEvent.ShowToast(message))
+    }
+
     sealed class MainEvent{
         object ChooseFile : MainEvent()
+        class ShowToast(val message: String?) : MainEvent()
     }
 }

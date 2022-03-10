@@ -3,11 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/titleFragment">
+    app:startDestination="@id/loginFragment">
 
     <fragment
-        tools:layout="@layout/fragment_title"
         android:id="@+id/titleFragment"
         android:name="com.me.kt_firebase_upload_image.ui.TitleFragment"
-        android:label="TitleFragment" />
+        android:label="TitleFragment"
+        tools:layout="@layout/fragment_title" />
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.me.kt_firebase_upload_image.ui.LoginFragment"
+        android:label="LoginFragment"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_titleFragment"
+            app:destination="@id/titleFragment" />
+    </fragment>
 </navigation>

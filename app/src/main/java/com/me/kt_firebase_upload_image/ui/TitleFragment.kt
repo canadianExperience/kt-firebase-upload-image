@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.me.kt_firebase_upload_image.MainActivity
 import com.me.kt_firebase_upload_image.R
 import com.me.kt_firebase_upload_image.databinding.FragmentTitleBinding
 import com.me.kt_firebase_upload_image.viewmodels.MainViewModel
@@ -20,10 +21,23 @@ class TitleFragment : Fragment(R.layout.fragment_title) {
 
         _binding = FragmentTitleBinding.bind(view)
 
+        (requireActivity() as MainActivity).apply {
+            supportActionBar?.show()
+            actionBar?.show()
+        }
+
         binding.mainViewModel = mainViewModel
 
         mainViewModel.imageUri.observe(viewLifecycleOwner){ uri->
             uri?.let {
+
+//                val name = binding.editTextFileName.text.trim().toString()
+//                val uploadImage = UploadImage(
+//                    name.ifEmpty { "No Name" },
+//                    it.toString()
+//                )
+
+
                 Picasso.with(requireContext())
                     .load(it)
                     .into(binding.imageView)

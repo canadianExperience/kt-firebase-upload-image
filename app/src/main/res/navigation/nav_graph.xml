@@ -8,6 +8,6 @@
     <fragment
         tools:layout="@layout/fragment_title"
         android:id="@+id/titleFragment"
-        android:name="com.me.kt_firebase_upload_image.TitleFragment"
+        android:name="com.me.kt_firebase_upload_image.ui.TitleFragment"
         android:label="TitleFragment" />
 </navigation>

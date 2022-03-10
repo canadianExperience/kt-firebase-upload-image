@@ -53,7 +53,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         mainViewModel.onShowToast("Signed up successful")
-                        findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToTitleFragment())
+                        findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToSelectDatabaseFragment())
                     } else {
                         mainViewModel.onShowToast(task.exception?.message)
                     }
@@ -72,7 +72,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 .addOnCompleteListener {task->
                     if (task.isSuccessful) {
                         mainViewModel.onShowToast("Signed in successfully")
-                        findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToTitleFragment())
+                        findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToSelectDatabaseFragment())
                     } else {
                         mainViewModel.onShowToast(task.exception?.message)
                     }

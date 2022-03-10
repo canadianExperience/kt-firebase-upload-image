@@ -6,17 +6,29 @@
     app:startDestination="@id/loginFragment">
 
     <fragment
-        android:id="@+id/titleFragment"
-        android:name="com.me.kt_firebase_upload_image.ui.TitleFragment"
-        android:label="TitleFragment"
-        tools:layout="@layout/fragment_title" />
+        android:id="@+id/databaseFragment"
+        android:name="com.me.kt_firebase_upload_image.ui.DatabaseFragment"
+        tools:layout="@layout/fragment_database" >
+        <argument
+            android:name="db_type"
+            app:argType="com.me.kt_firebase_upload_image.utils.DBType" />
+    </fragment>
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.me.kt_firebase_upload_image.ui.LoginFragment"
-        android:label="LoginFragment"
+        android:label="Login"
         tools:layout="@layout/fragment_login" >
         <action
-            android:id="@+id/action_loginFragment_to_titleFragment"
-            app:destination="@id/titleFragment" />
+            android:id="@+id/action_loginFragment_to_selectDatabaseFragment"
+            app:destination="@id/selectDatabaseFragment" />
+    </fragment>
+    <fragment
+        tools:layout="@layout/fragment_select_firebase_storage"
+        android:id="@+id/selectDatabaseFragment"
+        android:name="com.me.kt_firebase_upload_image.ui.SelectDatabaseFragment"
+        android:label="Select Database" >
+        <action
+            android:id="@+id/action_selectDatabaseFragment_to_titleFragment"
+            app:destination="@id/databaseFragment" />
     </fragment>
 </navigation>

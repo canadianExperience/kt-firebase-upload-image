@@ -8,11 +8,7 @@
     <fragment
         android:id="@+id/databaseFragment"
         android:name="com.me.kt_firebase_upload_image.ui.DatabaseFragment"
-        tools:layout="@layout/fragment_database" >
-        <argument
-            android:name="db_type"
-            app:argType="com.me.kt_firebase_upload_image.utils.DBType" />
-    </fragment>
+        tools:layout="@layout/fragment_database" />
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.me.kt_firebase_upload_image.ui.LoginFragment"

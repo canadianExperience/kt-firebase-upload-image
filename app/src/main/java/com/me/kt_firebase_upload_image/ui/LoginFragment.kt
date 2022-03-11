@@ -55,7 +55,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                         mainViewModel.onShowToast("Signed up successful")
                         findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToSelectDatabaseFragment())
                     } else {
-                        mainViewModel.onShowToast(task.exception?.message)
+                        task.exception?.message?.let { mainViewModel.onShowToast(it) }
                     }
                 }
         }
@@ -74,7 +74,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                         mainViewModel.onShowToast("Signed in successfully")
                         findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToSelectDatabaseFragment())
                     } else {
-                        mainViewModel.onShowToast(task.exception?.message)
+                        task.exception?.message?.let { mainViewModel.onShowToast(it) }
                     }
                 }
         }

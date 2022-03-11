@@ -37,6 +37,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
+            app:loadImageFromUri="@{mainViewModel.imageUri}"
             android:layout_marginTop="32dp"
             android:id="@+id/image_view"
             android:layout_width="match_parent"
@@ -51,6 +52,7 @@
             app:layout_constraintVertical_bias="0.0" />
 
         <ProgressBar
+            android:progress="@{mainViewModel.progress}"
             android:id="@+id/progress_bar"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="match_parent"

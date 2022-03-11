@@ -3,8 +3,10 @@ package com.me.kt_firebase_upload_image
 import android.app.Activity
 import android.content.Intent
 import android.content.Intent.ACTION_PICK
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
@@ -17,6 +19,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.me.kt_firebase_upload_image.databinding.ActivityMainBinding
 import com.me.kt_firebase_upload_image.utils.Constants.Companion.PICK_IMAGE_REQUEST
+import com.me.kt_firebase_upload_image.utils.DBType
 import com.me.kt_firebase_upload_image.utils.exhaustive
 import com.me.kt_firebase_upload_image.viewmodels.MainViewModel
 import kotlinx.coroutines.flow.collect
@@ -52,10 +55,9 @@ class MainActivity : AppCompatActivity() {
                 MainViewModel.MainEvent.ChooseFile -> {
                     chooseFile()
                 }
-                is MainViewModel.MainEvent.ShowToast -> {
-                    event.message?.let {message ->
-                        Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
-                    }
+                is MainViewModel.MainEvent.ShowToast ->
+                {
+                    Toast.makeText(this@MainActivity, event.message, Toast.LENGTH_SHORT).show()
                 }
             }.exhaustive
         }
@@ -73,10 +75,21 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    private fun getFileExtension(uri: Uri): String?{
+        val contentResolver = this.contentResolver
+        val mime = MimeTypeMap.getSingleton()
+
+        return mime.getExtensionFromMimeType(
+            contentResolver.getType(uri)
+        )
+    }
+
     private fun onActivityResult(requestCode: Int, result: ActivityResult){
         if (result.resultCode == Activity.RESULT_OK && requestCode == PICK_IMAGE_REQUEST) {
             result.data?.data?.let {
-                mainViewModel.setImageUriFlow(it)
+                val extension = getFileExtension(it)?:""
+
+                mainViewModel.onShowImage(it, extension)
             }
         }
     }

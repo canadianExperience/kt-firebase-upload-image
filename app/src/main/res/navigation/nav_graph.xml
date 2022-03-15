@@ -7,11 +7,11 @@
 
     <fragment
         android:id="@+id/databaseFragment"
-        android:name="com.me.kt_firebase_upload_image.ui.DatabaseFragment"
+        android:name="com.me.kt_firebase_upload_image.ui.fragments.DatabaseFragment"
         tools:layout="@layout/fragment_database" />
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.me.kt_firebase_upload_image.ui.LoginFragment"
+        android:name="com.me.kt_firebase_upload_image.ui.fragments.LoginFragment"
         android:label="Login"
         tools:layout="@layout/fragment_login" >
         <action
@@ -21,7 +21,7 @@
     <fragment
         tools:layout="@layout/fragment_select_firebase_storage"
         android:id="@+id/selectDatabaseFragment"
-        android:name="com.me.kt_firebase_upload_image.ui.SelectDatabaseFragment"
+        android:name="com.me.kt_firebase_upload_image.ui.fragments.SelectDatabaseFragment"
         android:label="Select Database" >
         <action
             android:id="@+id/action_selectDatabaseFragment_to_titleFragment"

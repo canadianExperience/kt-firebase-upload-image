@@ -1,4 +1,4 @@
-package com.me.kt_firebase_upload_image
+package com.me.kt_firebase_upload_image.ui
 
 import android.app.Activity
 import android.content.Intent
@@ -15,11 +15,10 @@ import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.me.kt_firebase_upload_image.R
 import com.me.kt_firebase_upload_image.databinding.ActivityMainBinding
 import com.me.kt_firebase_upload_image.utils.Constants.Companion.PICK_IMAGE_REQUEST
-import com.me.kt_firebase_upload_image.utils.DBType
 import com.me.kt_firebase_upload_image.utils.exhaustive
 import com.me.kt_firebase_upload_image.viewmodels.MainViewModel
 import kotlinx.coroutines.flow.collect

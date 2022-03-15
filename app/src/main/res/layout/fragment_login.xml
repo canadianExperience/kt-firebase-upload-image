@@ -29,17 +29,17 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:hint="Password"
-        app:endIconDrawable="@drawable/password_eye"
-        app:endIconMode="password_toggle"
         android:paddingStart="64dp"
         android:paddingEnd="64dp"
+        app:endIconDrawable="@drawable/password_eye"
+        app:endIconMode="password_toggle"
         app:layout_constraintTop_toBottomOf="@id/login_guideline">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/password"
-            android:inputType="numberPassword"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:inputType="numberPassword" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -48,7 +48,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.4" />
+        app:layout_constraintGuide_percent="0.37" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/login_guideline"
@@ -95,6 +95,5 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/button_signup"
         app:layout_constraintTop_toTopOf="@+id/buttons_guideline" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

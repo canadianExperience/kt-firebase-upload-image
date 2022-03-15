@@ -1,4 +1,4 @@
-package com.me.kt_firebase_upload_image.ui
+package com.me.kt_firebase_upload_image.ui.fragments
 
 import android.os.Bundle
 import android.view.View
@@ -8,9 +8,9 @@ import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.me.kt_firebase_upload_image.MainActivity
 import com.me.kt_firebase_upload_image.R
 import com.me.kt_firebase_upload_image.databinding.FragmentLoginBinding
+import com.me.kt_firebase_upload_image.ui.MainActivity
 import com.me.kt_firebase_upload_image.viewmodels.MainViewModel
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
@@ -53,13 +53,16 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         mainViewModel.onShowToast("Signed up successful")
-                        findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToSelectDatabaseFragment())
+                        goToSelectDatabaseFragment()
                     } else {
                         task.exception?.message?.let { mainViewModel.onShowToast(it) }
                     }
                 }
         }
     }
+
+    private fun goToSelectDatabaseFragment() =
+        findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToSelectDatabaseFragment())
 
     private fun firebaseLogin(){
         val username = binding.username.text?.trim().toString()
@@ -72,7 +75,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 .addOnCompleteListener {task->
                     if (task.isSuccessful) {
                         mainViewModel.onShowToast("Signed in successfully")
-                        findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToSelectDatabaseFragment())
+                        goToSelectDatabaseFragment()
                     } else {
                         task.exception?.message?.let { mainViewModel.onShowToast(it) }
                     }

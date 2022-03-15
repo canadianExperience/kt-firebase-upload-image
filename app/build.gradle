@@ -58,6 +58,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-database-ktx:20.0.3'
 
+    //Picasso
     implementation 'com.squareup.picasso:picasso:2.5.2'
 
     //Navigation

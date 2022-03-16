@@ -1,5 +1,5 @@
 # Firestore and Realtime Database Application
-Firebase practice, MVVM, DataBinding, Navigation
+Firebase practise, MVVM, DataBinding, Navigation
 
 ## Author
 - [@elenamelnikova](https://github.com/canadianExperience)

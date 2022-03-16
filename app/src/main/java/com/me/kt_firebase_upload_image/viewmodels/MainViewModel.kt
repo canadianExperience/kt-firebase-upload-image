@@ -8,10 +8,16 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.firestore.*
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
+import com.me.kt_firebase_upload_image.model.ReadUploadImage
 import com.me.kt_firebase_upload_image.model.UploadImage
 import com.me.kt_firebase_upload_image.utils.DBType
 import kotlinx.coroutines.channels.Channel
@@ -31,6 +37,8 @@ class MainViewModel: ViewModel() {
     //Firestore Database
     private val firestoreRef = FirebaseFirestore.getInstance().collection("uploads")
 
+    //RealTime Database
+    private val realTimeRef = Firebase.database.reference.child("uploads")
 
     //Realtime Database
     var dbType = DBType.FIRESTORE_DATABASE
@@ -57,11 +65,60 @@ class MainViewModel: ViewModel() {
     private val progressFlow = MutableStateFlow<Int?>(null)
     val progress: LiveData<Int?> get() = progressFlow.asLiveData()
 
-    private val firestoreUploadsFlow = MutableStateFlow<List<UploadImage>?>(null)
-    val firestoreUploads: LiveData<List<UploadImage>?> get() = firestoreUploadsFlow.asLiveData()
+    private val firestoreUploadsFlow = MutableStateFlow<List<ReadUploadImage>?>(null)
+    val firestoreUploads: LiveData<List<ReadUploadImage>?> get() = firestoreUploadsFlow.asLiveData()
 
+    private val realTimeUploadsFlow = MutableStateFlow<List<ReadUploadImage>?>(null)
+    val realTimeUploads: LiveData<List<ReadUploadImage>?> get() = realTimeUploadsFlow.asLiveData()
 
-    fun onShowFirestoreUploads() {
+    init {
+        onShowRealTimeUploads()
+        onShowFirestoreUploads()
+    }
+
+    private fun onShowRealTimeUploads(){
+        val childEventListener = object : ChildEventListener {
+            override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
+                updateRealTimeUploads(dataSnapshot, true)
+            }
+
+            override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
+            }
+
+            override fun onChildRemoved(dataSnapshot: DataSnapshot) {
+                updateRealTimeUploads(dataSnapshot, false)
+            }
+
+            override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
+                val image = dataSnapshot.getValue<UploadImage>()
+                val imageKey = dataSnapshot.key
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                onShowToast(databaseError.message)
+            }
+        }
+        realTimeRef.addChildEventListener(childEventListener)
+    }
+
+    private fun updateRealTimeUploads(dataSnapshot: DataSnapshot, isAdd: Boolean){
+        val image = dataSnapshot.getValue<UploadImage>()
+
+        image?.let {
+            val key = dataSnapshot.key
+            key?.let {id->
+                val imageWithId = ReadUploadImage(id, it.name, it.url)
+                viewModelScope.launch {
+                    val uploads = realTimeUploadsFlow.value?.toMutableList() ?: mutableListOf()
+                    if(isAdd) uploads.add(imageWithId) else uploads.remove(imageWithId)
+
+                    realTimeUploadsFlow.emit(uploads)
+                }
+            }
+        }
+    }
+
+    private fun onShowFirestoreUploads() {
         firestoreRef
             .orderBy("name", Query.Direction.ASCENDING)
             .addSnapshotListener { value, error ->
@@ -69,31 +126,36 @@ class MainViewModel: ViewModel() {
                     exception.message?.let { onShowToast(it) }
                 }
 
-                for (dc: DocumentChange in value?.documentChanges!!) {
+                val docs = value?.documentChanges
+                docs?.let {documentChanges ->
+                    for (dc: DocumentChange in documentChanges) {
+                        if(dc.type == DocumentChange.Type.ADDED || dc.type == DocumentChange.Type.REMOVED){
+                            val image = dc.document.toObject(UploadImage::class.java)
+                            val key = dc.document.id
+                            val imageWithId = ReadUploadImage(key, image.name, image.url)
 
-                    if(dc.type == DocumentChange.Type.ADDED || dc.type == DocumentChange.Type.REMOVED){
-                        val image = dc.document.toObject(UploadImage::class.java)
-                        image.id = dc.document.id
+                            viewModelScope.launch {
+                                val uploads = firestoreUploadsFlow.value?.toMutableList() ?: mutableListOf()
+                                when(dc.type){
+                                    DocumentChange.Type.ADDED -> uploads.add(imageWithId)
+                                    DocumentChange.Type.REMOVED -> uploads.remove(imageWithId)
+                                    else -> {}
+                                }
 
-                        viewModelScope.launch {
-                            val uploads = firestoreUploadsFlow.value?.toMutableList() ?: mutableListOf()
-                            when(dc.type){
-                                DocumentChange.Type.ADDED -> uploads.add(image)
-                                DocumentChange.Type.REMOVED -> uploads.remove(image)
-                                else -> {}
+                                firestoreUploadsFlow.emit(uploads)
                             }
-
-                            firestoreUploadsFlow.emit(uploads)
                         }
                     }
                 }
             }
-
     }
 
 
     fun deleteFromFirebase(id: String, url: String?) {
-        deleteUploadFromFirestoreDatabase(id)
+        when(dbType){
+            DBType.FIRESTORE_DATABASE -> deleteUploadFromFirestoreDatabase(id)
+            DBType.REAL_TIME_DATABASE -> deleteUploadFromRealTimeDatabase(id)
+        }
         deleteImageFromFirebaseStorage(url)
     }
 
@@ -107,6 +169,17 @@ class MainViewModel: ViewModel() {
             onShowToast("${it.message}")
         }
 
+    private fun deleteUploadFromRealTimeDatabase(id: String) {
+        realTimeRef
+            .child(id)
+            .removeValue()
+            .addOnSuccessListener {
+                onShowToast("Upload deleted from Real Time Database")
+            }
+            .addOnFailureListener {
+                onShowToast("${it.message}")
+            }
+    }
 
     private fun deleteImageFromFirebaseStorage(url: String?) = storage
         .getReferenceFromUrl(url?:"")
@@ -118,6 +191,30 @@ class MainViewModel: ViewModel() {
             onShowToast("${exception.message}")
         }
 
+    private fun saveToRealTimeDatabase(name: String, reference: String){
+        val uploadImage = UploadImage(name, reference)
+
+        realTimeRef
+            .push()
+            .setValue(uploadImage)
+            .addOnSuccessListener {
+                onDatabaseUploadProgressSuccess("Image uploaded to Real Time Database")
+            }
+            .addOnFailureListener {
+                onShowToast("${it.message}")
+                Log.d("REAL_TIME_DB", "${it.message}")
+            }
+    }
+
+    private fun onDatabaseUploadProgressSuccess(message: String) = viewModelScope.launch {
+        delay(500)
+        progressFlow.emit(0)
+        isUploadingFlow.emit(false)
+        updateCleanViewsFlow(true)
+        showToast(message)
+    }
+
+
     private fun saveToFirestoreDatabase(name: String, reference: String){
         val uploadImage = mutableMapOf<String, Any>()
         uploadImage["name"] = name
@@ -126,19 +223,12 @@ class MainViewModel: ViewModel() {
         firestoreRef
             .add(uploadImage)
             .addOnSuccessListener {
-                viewModelScope.launch {
-                    delay(500)
-                    progressFlow.emit(0)
-                    isUploadingFlow.emit(false)
-                    updateCleanViewsFlow(true)
-                    showToast("Image uploaded to Firestore")
-                }
+                onDatabaseUploadProgressSuccess("Image uploaded to Firestore")
             }
             .addOnFailureListener {
                 onShowToast("${it.message}")
                 Log.d("FIRESTORE", "${it.message}")
             }
-
     }
 
     fun onChooseFileBtnClick() = viewModelScope.launch {
@@ -191,7 +281,7 @@ class MainViewModel: ViewModel() {
                     onShowToast("Image uploaded to Firebase Storage")
                     val downloadUrl = task.result.toString()
                     when(dbType){
-                        DBType.REAL_TIME_DATABASE -> {}
+                        DBType.REAL_TIME_DATABASE -> saveToRealTimeDatabase(name, downloadUrl)
                         DBType.FIRESTORE_DATABASE -> saveToFirestoreDatabase(name, downloadUrl)
                     }
                 } else {
@@ -205,7 +295,6 @@ class MainViewModel: ViewModel() {
     }
 
     private suspend fun showToast(message: String) = mainEventChannel.send(MainEvent.ShowToast(message))
-
 
     sealed class MainEvent{
         object ChooseFile : MainEvent()

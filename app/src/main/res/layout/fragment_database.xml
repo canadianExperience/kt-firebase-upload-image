@@ -38,13 +38,13 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:src="@drawable/ic_photo_placeholder"
             android:id="@+id/image_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_above="@id/progress_bar"
             android:layout_below="@id/edit_text_file_name"
             android:layout_marginTop="16dp"
+            android:src="@drawable/ic_photo_placeholder"
             app:layout_constraintBottom_toTopOf="@+id/bottom_guideline"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -53,42 +53,26 @@
             app:loadImageFromUri="@{mainViewModel.imageUri}" />
 
         <ProgressBar
-            android:visibility="@{mainViewModel.progress == 0 ? View.GONE : View.VISIBLE}"
             android:id="@+id/progress_bar"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:progress="@{mainViewModel.progress}"
+            android:visibility="@{mainViewModel.progress == 0 ? View.GONE : View.VISIBLE}"
             app:layout_constraintTop_toBottomOf="@+id/image_view"
             tools:layout_editor_absoluteX="16dp" />
 
         <Button
-            android:enabled="@{!mainViewModel.isUploading()}"
             android:id="@+id/button_upload"
             style="@style/ThemeOverlay.Material3.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Upload"
-            app:layout_constraintEnd_toStartOf="@+id/button_show_uploads"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/button_show_uploads" />
-
-        <Button
-            android:id="@+id/button_show_uploads"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/button_upload"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:layout_toEndOf="@+id/button_upload"
-            android:text="Show Uploads"
-
+            android:enabled="@{!mainViewModel.isUploading()}"
+            android:text="Upload"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/button_upload"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/progress_bar" />
 
         <androidx.constraintlayout.widget.Guideline

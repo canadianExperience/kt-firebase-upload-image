@@ -5,18 +5,18 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.me.kt_firebase_upload_image.databinding.UploadRowBinding
-import com.me.kt_firebase_upload_image.model.UploadImage
+import com.me.kt_firebase_upload_image.model.ReadUploadImage
 
 
 class UploadsAdapter(
     private val listener: IRemoveClickListener
 ): RecyclerView.Adapter<UploadsAdapter.MyViewHolder>() {
 
-    private var uploads = emptyList<UploadImage>()
+    private var uploads = emptyList<ReadUploadImage>()
 
     class MyViewHolder(private val binding: UploadRowBinding): RecyclerView.ViewHolder(binding.root){
 
-        fun bind(upload: UploadImage, listener: IRemoveClickListener){
+        fun bind(upload: ReadUploadImage, listener: IRemoveClickListener){
             binding.upload = upload
             binding.clickListener = listener
             binding.executePendingBindings()
@@ -44,7 +44,7 @@ class UploadsAdapter(
        return uploads.size
     }
 
-    fun setData(newData: List<UploadImage>){
+    fun setData(newData: List<ReadUploadImage>){
         val myDiffUtil = MyDiffUtil(uploads, newData)
         val diffUtilResult = DiffUtil.calculateDiff(myDiffUtil)
         uploads = newData
